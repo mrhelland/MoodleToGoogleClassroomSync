@@ -3,7 +3,7 @@
     /// Represents a Google Classroom course with minimal metadata needed
     /// for synchronization and display in external applications.
     /// </summary>
-    public class Course {
+    public class GCourse {
         /// <summary>
         /// The unique identifier assigned by Google Classroom.
         /// Example: "123456789012".

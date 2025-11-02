@@ -12,10 +12,10 @@ namespace GoogleClassroomLib.Services {
     /// <summary>
     /// Handles Google OAuth2 authentication and returns an authenticated ClassroomService instance.
     /// </summary>
-    public class AuthService {
+    public class GAuthService {
         private readonly string _credentialsPath;
         private readonly string _tokenStorePath;
-        private readonly ILogger<AuthService> _logger;
+        private readonly ILogger<GAuthService> _logger;
 
         private readonly string[] _scopes = new[]
         {
@@ -24,7 +24,7 @@ namespace GoogleClassroomLib.Services {
             ClassroomService.Scope.ClassroomProfileEmails
         };
 
-        public AuthService(string credentialsPath, string tokenStorePath, ILogger<AuthService> logger) {
+        public GAuthService(string credentialsPath, string tokenStorePath, ILogger<GAuthService> logger) {
             _credentialsPath = credentialsPath ?? throw new ArgumentNullException(nameof(credentialsPath));
             _tokenStorePath = tokenStorePath ?? throw new ArgumentNullException(nameof(tokenStorePath));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

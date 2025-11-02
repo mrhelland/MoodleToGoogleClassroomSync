@@ -10,11 +10,11 @@ namespace GoogleClassroomLib.Providers {
     /// Provides low-level access to student roster data from Google Classroom.
     /// Responsible only for communicating with the Classroom API.
     /// </summary>
-    public class StudentProvider {
+    public class GStudentProvider {
         private readonly ClassroomService _service;
-        private readonly ILogger<StudentProvider> _logger;
+        private readonly ILogger<GStudentProvider> _logger;
 
-        public StudentProvider(ClassroomService service, ILogger<StudentProvider> logger) {
+        public GStudentProvider(ClassroomService service, ILogger<GStudentProvider> logger) {
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

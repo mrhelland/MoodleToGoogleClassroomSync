@@ -4,7 +4,7 @@ namespace GoogleClassroomLib.Models {
     /// <summary>
     /// Represents a student enrolled in a Google Classroom course.
     /// </summary>
-    public class Student {
+    public class GStudent {
         /// <summary>
         /// The Google Classroom-assigned user ID.
         /// Example: "117876543210987654321".

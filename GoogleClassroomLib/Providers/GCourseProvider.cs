@@ -11,17 +11,17 @@ namespace GoogleClassroomLib.Providers {
     /// Provides low-level access to Google Classroom course data.
     /// Responsible only for communicating with the Classroom API.
     /// </summary>
-    public class CourseProvider {
+    public class GCourseProvider {
         private readonly ClassroomService _service;
-        private readonly ILogger<CourseProvider> _logger;
+        private readonly ILogger<GCourseProvider> _logger;
 
-        public CourseProvider(ClassroomService service, ILogger<CourseProvider> logger) {
+        public GCourseProvider(ClassroomService service, ILogger<GCourseProvider> logger) {
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<Course>> GetAllCoursesAsync() {
-            var result = new List<Course>();
+        public async Task<List<GCourse>> GetAllCoursesAsync() {
+            var result = new List<GCourse>();
 
             try {
                 _logger.LogInformation("Requesting all courses from Google Classroom API...");
@@ -32,7 +32,7 @@ namespace GoogleClassroomLib.Providers {
 
                 if(response.Courses != null) {
                     foreach(var c in response.Courses) {
-                        result.Add(new Course {
+                        result.Add(new GCourse {
                             Id = c.Id,
                             Name = c.Name,
                             Section = c.Section,
@@ -54,6 +54,36 @@ namespace GoogleClassroomLib.Providers {
 
             return result;
         }
+
+        public async Task<GCourse?> GetCourseByIdAsync(string courseId) {
+            try {
+                _logger.LogInformation("Requesting details for Google Classroom course ID {CourseId}", courseId);
+
+                var request = _service.Courses.Get(courseId);
+                var course = await request.ExecuteAsync();
+
+                if(course == null) {
+                    _logger.LogWarning("No course found for ID {CourseId}", courseId);
+                    return null;
+                }
+
+                return new GCourse {
+                    Id = course.Id,
+                    Name = course.Name,
+                    Section = course.Section,
+                    Description = course.Description,
+                    OwnerEmail = course.OwnerId,
+                    State = course.CourseState,
+                    CreationTime = course.CreationTimeDateTimeOffset?.UtcDateTime,
+                    UpdateTime = course.UpdateTimeDateTimeOffset?.UtcDateTime
+                };
+            }
+            catch(Exception ex) {
+                _logger.LogError(ex, "Error retrieving course by ID {CourseId}", courseId);
+                return null;
+            }
+        }
+
 
     }
 }

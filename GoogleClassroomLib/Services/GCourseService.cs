@@ -7,27 +7,27 @@ using Microsoft.Extensions.Logging;
 namespace GoogleClassroomLib.Services {
     /// <summary>
     /// Provides higher-level business logic for Google Classroom courses.
-    /// Wraps <see cref="CourseProvider"/> and adds transformations or filtering.
+    /// Wraps <see cref="GCourseProvider"/> and adds transformations or filtering.
     /// </summary>
-    public class CourseService {
-        private readonly CourseProvider _provider;
-        private readonly ILogger<CourseService> _logger;
+    public class GCourseService {
+        private readonly GCourseProvider _provider;
+        private readonly ILogger<GCourseService> _logger;
 
-        public CourseService(CourseProvider provider, ILogger<CourseService> logger) {
+        public GCourseService(GCourseProvider provider, ILogger<GCourseService> logger) {
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<Models.Course>> GetCoursesAsync(bool onlyActive = true, string nameContains = null, bool sortByName = true) {
+        public async Task<List<Models.GCourse>> GetCoursesAsync(bool onlyActive = true, string nameContains = null, bool sortByName = true) {
             _logger.LogInformation("Retrieving courses via CourseProvider...");
             var courses = await _provider.GetAllCoursesAsync();
 
             if(courses == null || courses.Count == 0) {
                 _logger.LogWarning("No courses retrieved.");
-                return new List<Models.Course>();
+                return new List<Models.GCourse>();
             }
 
-            IEnumerable<Models.Course> filtered = courses;
+            IEnumerable<Models.GCourse> filtered = courses;
 
             if(onlyActive)
                 filtered = filtered.Where(c => string.Equals(c.State, "ACTIVE", StringComparison.OrdinalIgnoreCase));
