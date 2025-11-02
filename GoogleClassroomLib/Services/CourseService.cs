@@ -18,34 +18,29 @@ namespace GoogleClassroomLib.Services {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        /// <summary>
-        /// Retrieves all courses and sorts them alphabetically.
-        /// </summary>
-        public async Task<List<Models.Course>> GetCoursesSortedAsync() {
+        public async Task<List<Models.Course>> GetCoursesAsync(bool onlyActive = true, string nameContains = null, bool sortByName = true) {
             _logger.LogInformation("Retrieving courses via CourseProvider...");
+            var courses = await _provider.GetAllCoursesAsync();
 
-            var courses = await _provider.GetCoursesAsync();
-
-            if(courses == null || !courses.Any()) {
-                _logger.LogWarning("No courses were retrieved.");
+            if(courses == null || courses.Count == 0) {
+                _logger.LogWarning("No courses retrieved.");
                 return new List<Models.Course>();
             }
 
-            var sorted = courses.OrderBy(c => c.DisplayName).ToList();
+            IEnumerable<Models.Course> filtered = courses;
 
-            _logger.LogInformation("Returning {Count} sorted courses.", sorted.Count);
-            return sorted;
-        }
+            if(onlyActive)
+                filtered = filtered.Where(c => string.Equals(c.State, "ACTIVE", StringComparison.OrdinalIgnoreCase));
 
-        /// <summary>
-        /// Retrieves only active courses (state = ACTIVE).
-        /// </summary>
-        public async Task<List<Models.Course>> GetActiveCoursesAsync() {
-            var allCourses = await _provider.GetCoursesAsync();
-            var active = allCourses.Where(c => c.State == "ACTIVE").ToList();
+            if(!string.IsNullOrWhiteSpace(nameContains))
+                filtered = filtered.Where(c => c.Name?.IndexOf(nameContains, StringComparison.OrdinalIgnoreCase) >= 0);
 
-            _logger.LogInformation("Found {Count} active courses.", active.Count);
-            return active;
+            if(sortByName)
+                filtered = filtered.OrderBy(c => c.Name);
+
+            var finalList = filtered.ToList();
+            _logger.LogInformation("Returning {Count} courses after filtering.", finalList.Count);
+            return finalList;
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace YourNamespace {
+namespace MoodleToGoogleClassroomSync.Utils {
     /// <summary>
     /// A BindingList that supports remembering the last sort state
     /// and automatically toggling between ascending/descending.
@@ -63,7 +63,7 @@ namespace YourNamespace {
 
             int result;
             if(xValue == null)
-                result = (yValue == null) ? 0 : -1;
+                result = yValue == null ? 0 : -1;
             else if(yValue == null)
                 result = 1;
             else

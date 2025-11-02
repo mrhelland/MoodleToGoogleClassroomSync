@@ -23,7 +23,25 @@ namespace GoogleClassroomLib.Models {
             }
             set {
                 _name = value;
-                StudentService.SetFamilyAndGiven(this);
+                if(String.IsNullOrEmpty(value)) {
+                    this.GivenName = "";
+                    this.FamilyName = "";
+                }
+                else {
+                    // Split by whitespace
+                    var parts = value.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    if(parts.Length == 1) {
+                        // Single name provided (e.g. "Plato")
+                        this.GivenName = parts[0];
+                        this.FamilyName = string.Empty;
+                    }
+                    else {
+                        // All parts except the last are the given name(s)
+                        this.GivenName = string.Join(' ', parts[..^1]);
+                        this.FamilyName = parts[^1];
+                    }
+                }
+                    
             }
         }
 

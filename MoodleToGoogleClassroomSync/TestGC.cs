@@ -1,7 +1,6 @@
 ﻿using GoogleClassroomLib.Models;
 using GoogleClassroomLib.Providers;
 using GoogleClassroomLib.Services;
-using GoogleClassroomLib.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,10 +11,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using YourNamespace;
+using MoodleToGoogleClassroomSync.Utils;
 
 namespace MoodleToGoogleClassroomSync {
-    public partial class Test : Form {
+    public partial class TestGC : Form {
 
         private Course currentCourse;
         private List<Course> currentCourses;
@@ -27,7 +26,7 @@ namespace MoodleToGoogleClassroomSync {
         private readonly StudentProvider _studentProvider;
         private readonly StudentService _studentService;
 
-        public Test() {
+        public TestGC() {
             InitializeComponent();
 
             // === Logging setup ===
@@ -68,7 +67,7 @@ namespace MoodleToGoogleClassroomSync {
             btnGetCourses.Enabled = false;
             try {
                 dtCourses.DataSource = null;
-                currentCourses = await _courseService.GetCoursesSortedAsync();
+                currentCourses = await _courseService.GetCoursesAsync(true, null, true);
 
                 // Default sort by Name
                 currentCourses = currentCourses.OrderBy(c => c.Name).ToList();
@@ -77,6 +76,9 @@ namespace MoodleToGoogleClassroomSync {
 
                 // Add courses to DataGridView
                 dtCourses.DataSource = sortableCourses;
+
+
+
 
                 // Add a button column to view students if not already added
                 if(!dtCourses.Columns.Contains("ViewStudents")) {
@@ -95,7 +97,14 @@ namespace MoodleToGoogleClassroomSync {
                     dtCourses.Columns["Name"].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
 
                 // ✅ Move button to the front
-                dtCourses.Columns["ViewStudents"].DisplayIndex = 0;
+                //dtCourses.Columns["ViewStudents"].DisplayIndex = 0;
+
+                // ✅ Hide unwanted columns
+                DataGridUtilities.HideColumns(dtCourses, "Description", "OwnerEmail", "DisplayName");
+                DataGridUtilities.SetColumnDisplayOrder(dtCourses, "ViewStudents", "Name", "State");
+                DataGridUtilities.SetColumnWidth(dtCourses, "ViewStudents", 60);
+                DataGridUtilities.SetColumnWidth(dtCourses, "Name", 200);
+                DataGridUtilities.SetColumnWidth(dtCourses, "State", 60);
             }
             catch(Exception ex) {
                 MessageBox.Show($"Error retrieving courses: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -137,12 +146,18 @@ namespace MoodleToGoogleClassroomSync {
                 dtStudents.DataSource = sortableStudents;
                 dtStudents.AutoResizeColumns();
 
+
                 if(dtStudents.Columns.Contains("Name"))
                     dtStudents.Columns["Name"].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
 
                 if(currentStudents.Count == 0) {
                     MessageBox.Show("No students found for this course.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+                DataGridUtilities.HideColumns(dtStudents, "FamilyName", "GivenName", "DisplayLabel", "CourseId");
+                DataGridUtilities.SetColumnDisplayOrder(dtStudents, "Name", "Email", "EnrollmentSTatus");
+                DataGridUtilities.SetColumnWidth(dtStudents, "Name", 200);
+                DataGridUtilities.SetColumnWidth(dtStudents, "Email", 300);
+                DataGridUtilities.SetColumnWidth(dtStudents, "EnrollmentStatus", 100);
             }
             catch(Exception ex) {
                 MessageBox.Show($"Error retrieving students: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -158,4 +173,6 @@ namespace MoodleToGoogleClassroomSync {
         }
 
     }
+
+
 }

@@ -1,5 +1,5 @@
 ﻿namespace MoodleToGoogleClassroomSync {
-    partial class Test {
+    partial class TestM {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -43,24 +43,32 @@
             btnGetCourses.Name = "btnGetCourses";
             btnGetCourses.Size = new Size(462, 40);
             btnGetCourses.TabIndex = 0;
-            btnGetCourses.Text = "Get Google Classroom Courses";
+            btnGetCourses.Text = "Get Moodle Courses";
             btnGetCourses.UseVisualStyleBackColor = true;
             // 
             // dtCourses
             // 
+            dtCourses.AllowUserToAddRows = false;
+            dtCourses.AllowUserToDeleteRows = false;
+            dtCourses.AllowUserToResizeRows = false;
             dtCourses.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dtCourses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dtCourses.Location = new Point(3, 49);
             dtCourses.Name = "dtCourses";
+            dtCourses.RowHeadersVisible = false;
             dtCourses.Size = new Size(462, 516);
             dtCourses.TabIndex = 1;
             // 
             // dtStudents
             // 
+            dtStudents.AllowUserToAddRows = false;
+            dtStudents.AllowUserToDeleteRows = false;
+            dtStudents.AllowUserToResizeRows = false;
             dtStudents.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dtStudents.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dtStudents.Location = new Point(3, 49);
             dtStudents.Name = "dtStudents";
+            dtStudents.RowHeadersVisible = false;
             dtStudents.Size = new Size(928, 516);
             dtStudents.TabIndex = 2;
             // 
@@ -93,14 +101,14 @@
             lblCourse.TabIndex = 3;
             lblCourse.Text = "No Course Selected";
             // 
-            // Test
+            // TestM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1430, 592);
             Controls.Add(splitContainer1);
-            Name = "Test";
-            Text = "Test";
+            Name = "TestM";
+            Text = "Test Moodle";
             Load += Test_Load;
             ((System.ComponentModel.ISupportInitialize)dtCourses).EndInit();
             ((System.ComponentModel.ISupportInitialize)dtStudents).EndInit();

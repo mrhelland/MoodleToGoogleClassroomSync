@@ -20,39 +20,18 @@ namespace GoogleClassroomLib.Providers {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        /// <summary>
-        /// Retrieves all Google Classroom courses visible to the authenticated teacher.
-        /// You can filter for active courses and/or partial name matches.
-        /// </summary>
-        /// <param name="activeCourses">If true, returns only ACTIVE courses.</param>
-        /// <param name="nameContains">If not null or empty, returns courses whose name contains this text (case-insensitive).</param>
-        public async Task<List<Course>> GetCoursesAsync(bool activeCourses = true, string nameContains = null) {
+        public async Task<List<Course>> GetAllCoursesAsync() {
             var result = new List<Course>();
 
             try {
-                _logger.LogInformation("Requesting course list from Google Classroom API...");
-
+                _logger.LogInformation("Requesting all courses from Google Classroom API...");
                 var request = _service.Courses.List();
                 request.PageSize = 100;
 
                 var response = await request.ExecuteAsync();
 
                 if(response.Courses != null) {
-                    IEnumerable<Google.Apis.Classroom.v1.Data.Course> filtered = response.Courses;
-
-                    // Filter by active state
-                    if(activeCourses) {
-                        filtered = filtered.Where(c => string.Equals(c.CourseState, "ACTIVE", StringComparison.OrdinalIgnoreCase));
-                    }
-
-                    // Filter by name substring
-                    if(!string.IsNullOrWhiteSpace(nameContains)) {
-                        filtered = filtered.Where(c =>
-                            !string.IsNullOrEmpty(c.Name) &&
-                            c.Name.IndexOf(nameContains, StringComparison.OrdinalIgnoreCase) >= 0);
-                    }
-
-                    foreach(var c in filtered) {
+                    foreach(var c in response.Courses) {
                         result.Add(new Course {
                             Id = c.Id,
                             Name = c.Name,
@@ -64,12 +43,9 @@ namespace GoogleClassroomLib.Providers {
                             UpdateTime = c.UpdateTimeDateTimeOffset?.UtcDateTime
                         });
                     }
-
-                    _logger.LogInformation("Retrieved {Count} courses after filtering (active={Active}, nameContains='{Filter}').",
-                        result.Count, activeCourses, nameContains);
                 }
                 else {
-                    _logger.LogWarning("No courses returned by the API (empty or null response).");
+                    _logger.LogWarning("No courses returned by the API.");
                 }
             }
             catch(Exception ex) {
@@ -78,5 +54,6 @@ namespace GoogleClassroomLib.Providers {
 
             return result;
         }
+
     }
 }

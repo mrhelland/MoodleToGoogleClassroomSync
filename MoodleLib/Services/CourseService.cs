@@ -1,21 +1,60 @@
-﻿using MoodleLib.Models;
-using MoodleLib.Providers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using MoodleLib.Models;
+using MoodleLib.Providers;
 
-namespace MoodleLib.Services;
+namespace MoodleLib.Services {
+    /// <summary>
+    /// Provides higher-level business logic for Moodle courses.
+    /// Wraps <see cref="CourseProvider"/> and applies filtering or sorting.
+    /// </summary>
+    public class CourseService {
+        private readonly CourseProvider _provider;
+        private readonly ILogger<CourseService> _logger;
 
-public class CourseService {
-    private readonly MoodleApiProvider _api;
-    private readonly ILogger<CourseService> _logger;
+        public CourseService(CourseProvider provider, ILogger<CourseService> logger) {
+            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<CourseService>.Instance;
+        }
 
-    public CourseService(MoodleApiProvider api, ILogger<CourseService>? logger = null) {
-        _api = api;
-        _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<CourseService>.Instance;
-    }
+        /// <summary>
+        /// Retrieves all courses sorted alphabetically by full name.
+        /// </summary>
+        public async Task<List<Course>> GetCoursesSortedAsync() {
+            var courses = await _provider.GetAllCoursesAsync();
+            var sorted = courses.OrderBy(c => c.FullName).ToList();
 
-    public async Task<List<Course>> GetAllCoursesAsync() {
-        var result = await _api.GetAsync<List<Course>>("core_course_get_courses");
-        _logger.LogInformation("Retrieved {Count} courses", result?.Count ?? 0);
-        return result ?? new List<Course>();
+            _logger.LogInformation("Returning {Count} sorted courses.", sorted.Count);
+            return sorted;
+        }
+
+        /// <summary>
+        /// Retrieves only visible (active) courses.
+        /// </summary>
+        public async Task<List<Course>> GetVisibleCoursesAsync() {
+            var courses = await _provider.GetAllCoursesAsync();
+            var visible = courses.Where(c => c.Visible).ToList();
+
+            _logger.LogInformation("Found {Count} visible courses.", visible.Count);
+            return visible;
+        }
+
+        /// <summary>
+        /// Retrieves courses whose name contains the given substring (case-insensitive).
+        /// </summary>
+        public async Task<List<Course>> SearchCoursesByNameAsync(string search) {
+            var courses = await _provider.GetAllCoursesAsync();
+            var filtered = courses
+                .Where(c => !string.IsNullOrWhiteSpace(c.FullName) &&
+                            c.FullName.Contains(search, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(c => c.FullName)
+                .ToList();
+
+            _logger.LogInformation("Found {Count} courses matching '{Search}'.", filtered.Count, search);
+            return filtered;
+        }
     }
 }
