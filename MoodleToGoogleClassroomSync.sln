@@ -1,13 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36603.0 d17.14
+VisualStudioVersion = 17.14.36603.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoodleToGoogleClassroomSync", "MoodleToGoogleClassroomSync\MoodleToGoogleClassroomSync.csproj", "{E8E0D9A1-2D03-4D5F-918A-71B6A96C39FF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCBA8C5D-3443-4D2D-A956-DF38B04A358B} = {BCBA8C5D-3443-4D2D-A956-DF38B04A358B}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleClassroomLib", "GoogleClassroomLib\GoogleClassroomLib.csproj", "{B18004D6-2551-4447-9ED5-2D1D2530E60D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoodleLib", "MoodleLib\MoodleLib.csproj", "{CA4D8F4A-2FDF-4504-9360-58756A00AE06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradebookCore", "GradebookCore\GradebookCore.csproj", "{BCBA8C5D-3443-4D2D-A956-DF38B04A358B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.disabled = Directory.Packages.disabled
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +37,10 @@ Global
 		{CA4D8F4A-2FDF-4504-9360-58756A00AE06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA4D8F4A-2FDF-4504-9360-58756A00AE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA4D8F4A-2FDF-4504-9360-58756A00AE06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCBA8C5D-3443-4D2D-A956-DF38B04A358B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCBA8C5D-3443-4D2D-A956-DF38B04A358B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCBA8C5D-3443-4D2D-A956-DF38B04A358B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCBA8C5D-3443-4D2D-A956-DF38B04A358B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,7 +13,6 @@ namespace MoodleToGoogleClassroomSync.Utils {
 
         static AppConfig() {
             _config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
         }

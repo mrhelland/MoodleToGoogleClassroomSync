@@ -13,14 +13,14 @@ using System.Windows.Forms;
 namespace MoodleToGoogleClassroomSync {
     public partial class TestM : Form {
 
-        private Course currentCourse;
-        private List<Course> currentCourses;
-        private List<Student> currentStudents;
+        private MCourse currentCourse;
+        private List<MCourse> currentCourses;
+        private List<MStudent> currentStudents;
 
-        private readonly CourseProvider _courseProvider;
-        private readonly CourseService _courseService;
-        private readonly StudentProvider _studentProvider;
-        private readonly StudentService _studentService;
+        private readonly MCourseProvider _courseProvider;
+        private readonly MCourseService _courseService;
+        private readonly MStudentProvider _studentProvider;
+        private readonly MStudentService _studentService;
 
         public TestM() {
             InitializeComponent();
@@ -38,14 +38,14 @@ namespace MoodleToGoogleClassroomSync {
             string baseUrl = AppConfig.GetMoodleBaseUrl();
             string token = AppConfig.GetMoodleToken();
 
-            var auth = new MoodleAuthProvider(baseUrl, token, loggerFactory.CreateLogger<MoodleAuthProvider>());
-            var api = new MoodleApiProvider(auth, loggerFactory.CreateLogger<MoodleApiProvider>());
+            var auth = new MAuthProvider(baseUrl, token, loggerFactory.CreateLogger<MAuthProvider>());
+            var api = new MApiProvider(auth, loggerFactory.CreateLogger<MApiProvider>());
 
             // === Providers & Services ===
-            _courseProvider = new CourseProvider(api, loggerFactory.CreateLogger<CourseProvider>());
-            _courseService = new CourseService(_courseProvider, loggerFactory.CreateLogger<CourseService>());
-            _studentProvider = new StudentProvider(api, loggerFactory.CreateLogger<StudentProvider>());
-            _studentService = new StudentService(_studentProvider, loggerFactory.CreateLogger<StudentService>());
+            _courseProvider = new MCourseProvider(api, loggerFactory.CreateLogger<MCourseProvider>());
+            _courseService = new MCourseService(_courseProvider, loggerFactory.CreateLogger<MCourseService>());
+            _studentProvider = new MStudentProvider(api, loggerFactory.CreateLogger<MStudentProvider>());
+            _studentService = new MStudentService(_studentProvider, loggerFactory.CreateLogger<MStudentService>());
 
             // === Wire up UI events ===
             btnGetCourses.Click += async (s, e) => await BtnGetCourses_Click(s, e);
@@ -65,7 +65,7 @@ namespace MoodleToGoogleClassroomSync {
                 // Retrieve and sort courses
                 currentCourses = await _courseService.GetCoursesSortedAsync();
 
-                var sortableCourses = new SortableBindingList<Course>(currentCourses);
+                var sortableCourses = new SortableBindingList<MCourse>(currentCourses);
                 dtCourses.DataSource = sortableCourses;
 
                 // Add a button column for students if not already present
@@ -121,7 +121,7 @@ namespace MoodleToGoogleClassroomSync {
         }
 
         // === Load the students for the selected Moodle course ===
-        private async Task LoadStudentsForCourseAsync(Course course) {
+        private async Task LoadStudentsForCourseAsync(MCourse course) {
             try {
                 dtStudents.DataSource = null;
                 currentStudents = await _studentService.GetStudentsSortedAsync(course.Id);
@@ -132,7 +132,7 @@ namespace MoodleToGoogleClassroomSync {
                     return;
                 }
 
-                var sortableStudents = new SortableBindingList<Student>(currentStudents);
+                var sortableStudents = new SortableBindingList<MStudent>(currentStudents);
                 dtStudents.DataSource = sortableStudents;
                 dtStudents.AutoResizeColumns();
 

@@ -16,15 +16,15 @@ using MoodleToGoogleClassroomSync.Utils;
 namespace MoodleToGoogleClassroomSync {
     public partial class TestGC : Form {
 
-        private Course currentCourse;
-        private List<Course> currentCourses;
-        private List<Student> currentStudents;
+        private GCourse currentCourse;
+        private List<GCourse> currentCourses;
+        private List<GStudent> currentStudents;
 
 
-        private readonly CourseProvider _courseProvider;
-        private readonly CourseService _courseService;
-        private readonly StudentProvider _studentProvider;
-        private readonly StudentService _studentService;
+        private readonly GCourseProvider _courseProvider;
+        private readonly GCourseService _courseService;
+        private readonly GStudentProvider _studentProvider;
+        private readonly GStudentService _studentService;
 
         public TestGC() {
             InitializeComponent();
@@ -36,8 +36,8 @@ namespace MoodleToGoogleClassroomSync {
                 builder.SetMinimumLevel(LogLevel.Information);
             });
 
-            var authLogger = loggerFactory.CreateLogger<AuthService>();
-            var auth = new AuthService(
+            var authLogger = loggerFactory.CreateLogger<GAuthService>();
+            var auth = new GAuthService(
                 AppConfig.GetGoogleCredentialsPath(),
                 AppConfig.GetTokenStorePath(),
                 authLogger
@@ -46,10 +46,10 @@ namespace MoodleToGoogleClassroomSync {
             // Get authenticated Google Classroom client
             var classroomService = Task.Run(() => auth.GetAuthenticatedServiceAsync()).Result;
 
-            _courseProvider = new CourseProvider(classroomService, loggerFactory.CreateLogger<CourseProvider>());
-            _courseService = new CourseService(_courseProvider, loggerFactory.CreateLogger<CourseService>());
-            _studentProvider = new StudentProvider(classroomService, loggerFactory.CreateLogger<StudentProvider>());
-            _studentService = new StudentService(_studentProvider, loggerFactory.CreateLogger<StudentService>());
+            _courseProvider = new GCourseProvider(classroomService, loggerFactory.CreateLogger<GCourseProvider>());
+            _courseService = new GCourseService(_courseProvider, loggerFactory.CreateLogger<GCourseService>());
+            _studentProvider = new GStudentProvider(classroomService, loggerFactory.CreateLogger<GStudentProvider>());
+            _studentService = new GStudentService(_studentProvider, loggerFactory.CreateLogger<GStudentService>());
 
 
             // Wire up event handlers
@@ -72,7 +72,7 @@ namespace MoodleToGoogleClassroomSync {
                 // Default sort by Name
                 currentCourses = currentCourses.OrderBy(c => c.Name).ToList();
 
-                var sortableCourses = new SortableBindingList<Course>(currentCourses);
+                var sortableCourses = new SortableBindingList<GCourse>(currentCourses);
 
                 // Add courses to DataGridView
                 dtCourses.DataSource = sortableCourses;
@@ -132,7 +132,7 @@ namespace MoodleToGoogleClassroomSync {
         }
 
         // === Load the students for the selected course ===
-        private async Task LoadStudentsForCourseAsync(Course course) {
+        private async Task LoadStudentsForCourseAsync(GCourse course) {
             try {
                 dtStudents.DataSource = null;
                 currentStudents = await _studentService.GetStudentsSortedAsync(course.Id);
@@ -142,7 +142,7 @@ namespace MoodleToGoogleClassroomSync {
                     .OrderBy(s => GetLastName(s.Name))
                     .ToList();
 
-                var sortableStudents = new SortableBindingList<Student>(currentStudents);
+                var sortableStudents = new SortableBindingList<GStudent>(currentStudents);
                 dtStudents.DataSource = sortableStudents;
                 dtStudents.AutoResizeColumns();
 
