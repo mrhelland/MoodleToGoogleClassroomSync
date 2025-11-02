@@ -2,15 +2,15 @@
 
 namespace MoodleLib.Providers;
 
-public class MoodleAuthProvider {
+public class MAuthProvider {
     private readonly string _baseUrl;
     private readonly string _token;
-    private readonly ILogger<MoodleAuthProvider> _logger;
+    private readonly ILogger<MAuthProvider> _logger;
 
-    public MoodleAuthProvider(string baseUrl, string token, ILogger<MoodleAuthProvider>? logger = null) {
+    public MAuthProvider(string baseUrl, string token, ILogger<MAuthProvider>? logger = null) {
         _baseUrl = baseUrl.TrimEnd('/');
         _token = token;
-        _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<MoodleAuthProvider>.Instance;
+        _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<MAuthProvider>.Instance;
     }
 
     public string BuildServiceUrl(string functionName) {

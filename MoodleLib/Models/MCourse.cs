@@ -7,7 +7,7 @@ namespace MoodleLib.Models {
     /// for synchronization and display in external applications.
     /// </summary>
 
-    public class Course {
+    public class MCourse {
 
         public string Id { get; set; } = string.Empty;
         public string ShortName { get; set; } = string.Empty;

@@ -6,15 +6,15 @@ using MoodleLib.Utils;
 
 namespace MoodleLib.Providers;
 
-public class MoodleApiProvider {
+public class MApiProvider {
     private readonly HttpClient _client;
-    private readonly MoodleAuthProvider _auth;
-    private readonly ILogger<MoodleApiProvider> _logger;
+    private readonly MAuthProvider _auth;
+    private readonly ILogger<MApiProvider> _logger;
 
-    public MoodleApiProvider(MoodleAuthProvider auth, ILogger<MoodleApiProvider>? logger = null) {
+    public MApiProvider(MAuthProvider auth, ILogger<MApiProvider>? logger = null) {
         _auth = auth;
         _client = HttpClientFactoryUtil.Create();
-        _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<MoodleApiProvider>.Instance;
+        _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<MApiProvider>.Instance;
     }
 
     public async Task<T?> GetAsync<T>(string functionName, Dictionary<string, string>? parameters = null) {

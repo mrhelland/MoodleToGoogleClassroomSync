@@ -8,23 +8,23 @@ namespace MoodleLib.Providers {
     /// <summary>
     /// Provides low-level access to student enrollment data from Moodle.
     /// </summary>
-    public class StudentProvider {
-        private readonly MoodleApiProvider _api;
-        private readonly ILogger<StudentProvider> _logger;
+    public class MStudentProvider {
+        private readonly MApiProvider _api;
+        private readonly ILogger<MStudentProvider> _logger;
 
-        public StudentProvider(MoodleApiProvider api, ILogger<StudentProvider> logger) {
+        public MStudentProvider(MApiProvider api, ILogger<MStudentProvider> logger) {
             _api = api ?? throw new ArgumentNullException(nameof(api));
-            _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<StudentProvider>.Instance;
+            _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<MStudentProvider>.Instance;
         }
 
         /// <summary>
         /// Retrieves all students enrolled in a specified Moodle course.
         /// </summary>
-        public async Task<List<Student>> GetEnrolledStudentsAsync(string courseId) {
+        public async Task<List<MStudent>> GetEnrolledStudentsAsync(string courseId) {
             const string functionName = "core_enrol_get_enrolled_users";
             var parameters = new Dictionary<string, string> { ["courseid"] = courseId };
 
-            var result = new List<Student>();
+            var result = new List<MStudent>();
 
             try {
                 _logger.LogInformation("Fetching enrolled students for course {CourseId}...", courseId);
@@ -33,7 +33,7 @@ namespace MoodleLib.Providers {
 
                 if(response != null) {
                     foreach(var s in response) {
-                        result.Add(new Student {
+                        result.Add(new MStudent {
                             Id = s.id?.ToString() ?? string.Empty,
                             FullName = s.fullname ?? string.Empty,
                             Email = s.email ?? string.Empty,
@@ -48,7 +48,7 @@ namespace MoodleLib.Providers {
             }
             catch(Exception ex) {
                 _logger.LogError(ex, "Error retrieving students for course {CourseId}", courseId);
-                return new List<Student>();
+                return new List<MStudent>();
             }
         }
     }
