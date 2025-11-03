@@ -16,6 +16,8 @@ namespace MoodleToGoogleClassroomSync {
         private MCourse currentCourse;
         private List<MCourse> currentCourses;
         private List<MStudent> currentStudents;
+        private MApiProvider mApiProvider;
+        private MAuthProvider mAuthProvider;
 
         private readonly MCourseProvider _courseProvider;
         private readonly MCourseService _courseService;
@@ -38,13 +40,13 @@ namespace MoodleToGoogleClassroomSync {
             string baseUrl = AppConfig.GetMoodleBaseUrl();
             string token = AppConfig.GetMoodleToken();
 
-            var auth = new MAuthProvider(baseUrl, token, loggerFactory.CreateLogger<MAuthProvider>());
-            var api = new MApiProvider(auth, loggerFactory.CreateLogger<MApiProvider>());
+            mAuthProvider = new MAuthProvider(baseUrl, token, loggerFactory.CreateLogger<MAuthProvider>());
+            mApiProvider = new MApiProvider(mAuthProvider, loggerFactory.CreateLogger<MApiProvider>());
 
             // === Providers & Services ===
-            _courseProvider = new MCourseProvider(api, loggerFactory.CreateLogger<MCourseProvider>());
+            _courseProvider = new MCourseProvider(mApiProvider, loggerFactory.CreateLogger<MCourseProvider>());
             _courseService = new MCourseService(_courseProvider, loggerFactory.CreateLogger<MCourseService>());
-            _studentProvider = new MStudentProvider(api, loggerFactory.CreateLogger<MStudentProvider>());
+            _studentProvider = new MStudentProvider(mApiProvider, loggerFactory.CreateLogger<MStudentProvider>());
             _studentService = new MStudentService(_studentProvider, loggerFactory.CreateLogger<MStudentService>());
 
             // === Wire up UI events ===
@@ -120,6 +122,40 @@ namespace MoodleToGoogleClassroomSync {
             }
         }
 
+        //// === Load the students for the selected Moodle course ===
+        //private async Task LoadStudentsForCourseAsync(MCourse course) {
+        //    try {
+        //        dtStudents.DataSource = null;
+        //        currentStudents = await _studentService.GetStudentsSortedAsync(course.Id);
+
+        //        if(currentStudents == null || currentStudents.Count == 0) {
+        //            MessageBox.Show("No students found for this Moodle course.", "Info",
+        //                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            return;
+        //        }
+
+        //        var sortableStudents = new SortableBindingList<MStudent>(currentStudents);
+        //        dtStudents.DataSource = sortableStudents;
+        //        dtStudents.AutoResizeColumns();
+
+        //        if(dtStudents.Columns.Contains("FullName"))
+        //            dtStudents.Columns["FullName"].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+
+        //        // Hide less relevant columns
+        //        DataGridUtilities.HideColumns(dtStudents, "GivenName", "FamilyName", "CourseId");
+
+        //        // Set display order and widths
+        //        DataGridUtilities.SetColumnDisplayOrder(dtStudents, "FullName", "Email", "EnrollmentStatus");
+        //        DataGridUtilities.SetColumnWidth(dtStudents, "FullName", 250);
+        //        DataGridUtilities.SetColumnWidth(dtStudents, "Email", 300);
+        //        DataGridUtilities.SetColumnWidth(dtStudents, "EnrollmentStatus", 100);
+        //    }
+        //    catch(Exception ex) {
+        //        MessageBox.Show($"Error retrieving Moodle students: {ex.Message}", "Error",
+        //            MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
         // === Load the students for the selected Moodle course ===
         private async Task LoadStudentsForCourseAsync(MCourse course) {
             try {
@@ -147,11 +183,57 @@ namespace MoodleToGoogleClassroomSync {
                 DataGridUtilities.SetColumnWidth(dtStudents, "FullName", 250);
                 DataGridUtilities.SetColumnWidth(dtStudents, "Email", 300);
                 DataGridUtilities.SetColumnWidth(dtStudents, "EnrollmentStatus", 100);
+
+                // === Add "View Grades" button column (if not already added) ===
+                const string btnColName = "colViewGrades";
+                if(!dtStudents.Columns.Contains(btnColName)) {
+                    var btnCol = new DataGridViewButtonColumn {
+                        Name = btnColName,
+                        HeaderText = "",
+                        Text = "View Grades",
+                        UseColumnTextForButtonValue = true,
+                        Width = 110,
+                        AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                        FlatStyle = FlatStyle.Standard
+                    };
+                    dtStudents.Columns.Insert(0, btnCol);
+                }
+
+                // === Hook up event handler once ===
+                dtStudents.CellContentClick -= DtStudents_CellContentClick;
+                dtStudents.CellContentClick += DtStudents_CellContentClick;
             }
             catch(Exception ex) {
                 MessageBox.Show($"Error retrieving Moodle students: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void DtStudents_CellContentClick(object? sender, DataGridViewCellEventArgs e) {
+            if(e.RowIndex < 0)
+                return; // header row
+            var grid = sender as DataGridView;
+            if(grid == null)
+                return;
+
+            // Check if the clicked cell is the "View Grades" button
+            if(grid.Columns[e.ColumnIndex].Name == "colViewGrades") {
+                var student = grid.Rows[e.RowIndex].DataBoundItem as MStudent;
+                if(student == null)
+                    return;
+
+                // Create the grade viewer form
+                var form = new TestStudentGradesM {
+                    Student = student,
+                    ApiProvider = mApiProvider,     // assuming your parent form defines these
+                    AuthProvider = mAuthProvider
+                };
+                form.LoadData();
+                form.ShowDialog(this);
+
+            }
+        }
+
+
     }
 }

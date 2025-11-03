@@ -25,6 +25,8 @@
         private void InitializeComponent() {
             btnGoogleClassroom = new Button();
             btnMoodle = new Button();
+            btnGenerateStructure = new Button();
+            txtOutput = new TextBox();
             SuspendLayout();
             // 
             // btnGoogleClassroom
@@ -39,6 +41,7 @@
             // 
             // btnMoodle
             // 
+            btnMoodle.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnMoodle.Location = new Point(669, 12);
             btnMoodle.Name = "btnMoodle";
             btnMoodle.Size = new Size(119, 74);
@@ -47,21 +50,46 @@
             btnMoodle.UseVisualStyleBackColor = true;
             btnMoodle.Click += btnMoodle_Click;
             // 
+            // btnGenerateStructure
+            // 
+            btnGenerateStructure.Location = new Point(12, 163);
+            btnGenerateStructure.Name = "btnGenerateStructure";
+            btnGenerateStructure.Size = new Size(119, 74);
+            btnGenerateStructure.TabIndex = 2;
+            btnGenerateStructure.Text = "Build Project Structure File";
+            btnGenerateStructure.UseVisualStyleBackColor = true;
+            btnGenerateStructure.Click += btnGenerateStructure_Click;
+            // 
+            // txtOutput
+            // 
+            txtOutput.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtOutput.Location = new Point(141, 166);
+            txtOutput.Multiline = true;
+            txtOutput.Name = "txtOutput";
+            txtOutput.ScrollBars = ScrollBars.Both;
+            txtOutput.Size = new Size(647, 272);
+            txtOutput.TabIndex = 3;
+            // 
             // TestDispatch
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(txtOutput);
+            Controls.Add(btnGenerateStructure);
             Controls.Add(btnMoodle);
             Controls.Add(btnGoogleClassroom);
             Name = "TestDispatch";
             Text = "TestDispatch";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private Button btnGoogleClassroom;
         private Button btnMoodle;
+        private Button btnGenerateStructure;
+        private TextBox txtOutput;
     }
 }

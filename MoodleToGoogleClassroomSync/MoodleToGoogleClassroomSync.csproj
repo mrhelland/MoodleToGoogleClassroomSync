@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GoogleClassroomLib\GoogleClassroomLib.csproj" />
+    <ProjectReference Include="..\GradebookCore\GradebookCore.csproj" />
     <ProjectReference Include="..\MoodleLib\MoodleLib.csproj" />
   </ItemGroup>
 
