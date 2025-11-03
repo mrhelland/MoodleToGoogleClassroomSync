@@ -15,7 +15,9 @@ namespace GradebookCore.Models {
         public string CourseId { get; set; } = string.Empty;
         public string CourseName { get; set; } = string.Empty;
         public string SourceSystem { get; set; } = string.Empty;
+        public string SourceId { get; set; } = string.Empty;
         public string DestinationSystem { get; set; } = string.Empty;
+        public string DestinationId { get; set; } = string.Empty;
 
         public List<Student> Students { get; set; } = new();
         public List<Assignment> Assignments { get; set; } = new();
