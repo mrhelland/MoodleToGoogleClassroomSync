@@ -36,6 +36,11 @@ namespace MoodleLib.Models {
             get; set;
         }
 
+        [JsonProperty("graderaw")]
+        public double? GradeRaw {
+            get; set;
+        }
+
         [JsonProperty("grademax")]
         public double? GradeMax {
             get; set;
@@ -48,11 +53,6 @@ namespace MoodleLib.Models {
 
         [JsonProperty("gradeformatted")]
         public string? GradeFormatted {
-            get; set;
-        }
-
-        [JsonProperty("gradeformattedraw")]
-        public double? GradeFormattedRaw {
             get; set;
         }
 
@@ -122,10 +122,18 @@ namespace MoodleLib.Models {
         [JsonIgnore]
         public bool IsModule => ItemType?.Equals("mod", StringComparison.OrdinalIgnoreCase) == true;
 
+        [JsonIgnore]
+        public string? SubmissionState { get; set; } = "not_submitted";
+
+
         /// <summary>
         /// Returns a friendly string summary of this grade item.
         /// </summary>
         public override string ToString() =>
             $"{ItemName} ({ItemType}{(Hidden ? ", hidden" : "")})";
+
+
+        [JsonIgnore]
+        public string GradeEarned => GradeRaw?.ToString("0.##") ?? MoodleLib.Utils.HtmlCleaner.Clean(GradeFormatted);
     }
 }

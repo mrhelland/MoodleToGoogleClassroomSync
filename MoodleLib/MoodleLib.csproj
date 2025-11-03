@@ -7,14 +7,9 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\GradebookCore\GradebookCore.csproj" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\GradebookCore\GradebookCore.csproj" />
   </ItemGroup>
 
 </Project>

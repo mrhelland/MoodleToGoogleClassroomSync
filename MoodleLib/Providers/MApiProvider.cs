@@ -39,4 +39,11 @@ public class MApiProvider {
             throw;
         }
     }
+
+    public async Task<string> GetRawAsync(string functionName, Dictionary<string, string> parameters) {
+        var result = await GetAsync<object>(functionName, parameters);
+        return result?.ToString() ?? string.Empty;
+    }
+
+
 }
